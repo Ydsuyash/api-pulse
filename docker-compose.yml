@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api-service:
+    build: ./api-service
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./api-service/prisma:/app/prisma # Persist SQLite DB (dev.db in prisma folder)
+    environment:
+      - PORT=5000
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=supersecretkeyForDocker
+      - CLIENT_URL=http://localhost:80
+    restart: always
+
+  api-monitor-frontend:
+    build: ./api-monitor-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-service
+    restart: always

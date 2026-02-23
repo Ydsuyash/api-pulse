@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String?
+  email     String    @unique
+  password  String
+  phone     String?
+  avatar    String?
+  createdAt DateTime  @default(now())
+  monitors  Monitor[]
+  memberships TeamMember[]
+  ownedTeams  Team[]
+}
+
+model Team {
+  id        String       @id @default(uuid())
+  name      String
+  ownerId   String
+  owner     User         @relation(fields: [ownerId], references: [id])
+  members   TeamMember[]
+  monitors  Monitor[]
+  createdAt DateTime     @default(now())
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      String   @default("MEMBER") // ADMIN, MEMBER, VIEWER
+  joinedAt  DateTime @default(now())
+
+  @@unique([teamId, userId])
+}
+
+model Monitor {
+  id          String     @id @default(uuid())
+  name        String
+  url         String
+  interval    String     @default("1m")
+  type        String     @default("HTTP") // HTTP, PING, TCP
+  status      String     @default("UP") // UP, DOWN, PAUSED
+  isActive    Boolean    @default(true)
+  lastChecked DateTime?
+  latency     Int?
+  createdAt   DateTime   @default(now())
+  
+  // Ownership: A monitor can belong to a User (personal) or a Team (shared)
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  
+  teamId      String?
+  team        Team?       @relation(fields: [teamId], references: [id])
+
+  incidents   Incident[]
+  checkResults CheckResult[]
+}
+
+model Incident {
+  id          String   @id @default(uuid())
+  type        String   @default("DOWN") // DOWN, LATENCY, ERROR
+  severity    String   // Critical, Warning
+  status      String   @default("Open") // Open, Resolved
+  description String?
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  monitorId   String
+  monitor     Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+}
+
+model CheckResult {
+  id         String   @id @default(uuid())
+  monitorId  String
+  monitor    Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  status     String   // "UP" | "DOWN"
+  latency    Int
+  statusCode Int?
+  error      String?
+  createdAt  DateTime @default(now())
+
+  @@index([monitorId, createdAt])
+}

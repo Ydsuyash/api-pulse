@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(MEMBER)
+  teamId    String?
+  team      Team?    @relation(fields: [teamId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Team {
+  id        String    @id @default(uuid())
+  name      String
+  users     User[]
+  monitors  Monitor[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Monitor {
+  id              String     @id @default(uuid())
+  name            String
+  url             String
+  type            MonitorType
+  interval        Int        @default(60) // in seconds
+  status          MonitorStatus @default(ACTIVE)
+  teamId          String
+  team            Team       @relation(fields: [teamId], references: [id])
+  incidents       Incident[]
+  lastCheck       DateTime?
+  lastStatus      Int?       // HTTP status code
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  isDeleted       Boolean    @default(false)
+
+  @@index([teamId])
+}
+
+model Incident {
+  id          String   @id @default(uuid())
+  monitorId   String
+  monitor     Monitor  @relation(fields: [monitorId], references: [id])
+  status      IncidentStatus @default(OPEN)
+  startedAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  severity    Severity @default(CRITICAL)
+  summary     String?
+  triageNotes String?
+  teamId      String   // Denormalized for faster queries
+  
+  @@index([monitorId])
+  @@index([teamId, status])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum MonitorType {
+  HTTP
+  TCP
+  PING
+}
+
+enum MonitorStatus {
+  ACTIVE
+  PAUSED
+}
+
+enum IncidentStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum Severity {
+  CRITICAL
+  WARNING
+}
