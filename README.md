@@ -33,11 +33,16 @@ The easiest way to get the entire platform running is using Docker Compose.
     ```bash
     docker-compose up --build
     ```
-3.  **Access the apps**:
-    - **Frontend**: [http://localhost:80](http://localhost:80)
-    - **Backend API**: [http://localhost:5000](http://localhost:5000)
+3.  3.  **Access the apps**:
+-    - **Frontend**: [http://localhost:80](http://localhost:80)
+-    - **Backend API**: [http://localhost:5000](http://localhost:5000)
++    - **Docker Setup**:
++        - Frontend: [http://localhost:80](http://localhost:80)
++        - Backend: [http://localhost:5000](http://localhost:5000)
++    - **Manual Dev Setup** (after running `npm run dev`):
++        - Frontend: [http://localhost:5173](http://localhost:5173)
++        - Backend: [http://localhost:5000](http://localhost:5000)
 
-## 🔧 Manual Setup
 
 ### Backend Setup
 1. `cd api-service`
