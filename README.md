@@ -8,6 +8,11 @@ API Pulse consists of two main components orchestrated with Docker:
 - **`api-monitor-frontend`**: A modern React dashboard for visualizing system health and managing monitors.
 - **`api-service`**: A robust Node.js/TypeScript backend API that handles authentication, monitoring logic, and incident tracking.
 
+## 🌍 Global Deployment
+
+Want to make **API Pulse** accessible to anyone in the world via a single link (like `google.com`)?
+Check our [Global Deployment Guide](./DEPLOYMENT.md) for step-by-step instructions on hosting with Vercel, Render, and Supabase.
+
 ## 🛠 Tech Stack
 
 ### Backend (`api-service`)
@@ -33,15 +38,13 @@ The easiest way to get the entire platform running is using Docker Compose.
     ```bash
     docker-compose up --build
     ```
-3.  3.  **Access the apps**:
--    - **Frontend**: [http://localhost:80](http://localhost:80)
--    - **Backend API**: [http://localhost:5000](http://localhost:5000)
-+    - **Docker Setup**:
-+        - Frontend: [http://localhost:80](http://localhost:80)
-+        - Backend: [http://localhost:5000](http://localhost:5000)
-+    - **Manual Dev Setup** (after running `npm run dev`):
-+        - Frontend: [http://localhost:5173](http://localhost:5173)
-+        - Backend: [http://localhost:5000](http://localhost:5000)
+3.  **Access the apps**:
+    - **Docker Setup**:
+        - Frontend: [http://localhost:80](http://localhost:80)
+        - Backend: [http://localhost:5000](http://localhost:5000)
+    - **Manual Dev Setup** (after running `npm run dev`):
+        - Frontend: [http://localhost:5173](http://localhost:5173)
+        - Backend: [http://localhost:5000](http://localhost:5000)
 
 
 ### Backend Setup
