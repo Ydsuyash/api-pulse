@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
+import LoginModal from '../components/LoginModal';
 
 const DashboardLayout = () => {
     return (
@@ -12,6 +13,7 @@ const DashboardLayout = () => {
                     <Outlet />
                 </main>
             </div>
+            <LoginModal />
         </div>
     );
 };

@@ -7,8 +7,14 @@ export const getStats = async (req: AuthRequest, res: Response) => {
         const userId = req.user?.userId;
 
         if (!userId) {
-            res.status(401).json({ message: 'Unauthorized' });
-            return;
+            // Return demo data for public users
+            return res.json({
+                totalMonitors: 12,
+                activeIncidents: 1,
+                uptime: '99.9%',
+                avgLatency: '45ms',
+                isDemo: true
+            });
         }
 
         const [totalMonitors, upMonitors, incidents, latencyAgg] = await Promise.all([

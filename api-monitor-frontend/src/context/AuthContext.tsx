@@ -18,6 +18,8 @@ interface AuthContextType {
     register: (data: any) => Promise<void>;
     logout: () => void;
     isAuthenticated: boolean;
+    showLoginModal: boolean;
+    setShowLoginModal: (show: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,6 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [isLoading, setIsLoading] = useState(true);
+    const [showLoginModal, setShowLoginModal] = useState(false);
 
     useEffect(() => {
         const initAuth = async () => {
@@ -45,6 +48,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         initAuth();
     }, []);
+
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            const timer = setTimeout(() => {
+                setShowLoginModal(true);
+            }, 120000); // 2 minutes
+
+            return () => clearTimeout(timer);
+        } else if (isAuthenticated) {
+            setShowLoginModal(false);
+        }
+    }, [isLoading, isAuthenticated]);
 
     const login = async (credentials: any) => {
         try {
@@ -92,7 +107,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             login,
             register,
             logout,
-            isAuthenticated: !!token
+            isAuthenticated: !!token,
+            showLoginModal,
+            setShowLoginModal
         }}>
             {children}
         </AuthContext.Provider>

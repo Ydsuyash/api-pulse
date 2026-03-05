@@ -39,57 +39,66 @@ const TopBar = () => {
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
 
-                <div className="relative" ref={profileRef}>
-                    <button
-                        onClick={() => setIsProfileOpen(!isProfileOpen)}
-                        className="flex items-center space-x-3 pl-4 border-l border-gray-800 focus:outline-none group"
+                {user ? (
+                    <div className="relative" ref={profileRef}>
+                        <button
+                            onClick={() => setIsProfileOpen(!isProfileOpen)}
+                            className="flex items-center space-x-3 pl-4 border-l border-gray-800 focus:outline-none group"
+                        >
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center ring-2 ring-transparent group-hover:ring-indigo-500/50 transition-all">
+                                <span className="text-white font-bold text-xs">
+                                    {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+                                </span>
+                            </div>
+                            <div className="hidden md:block text-left">
+                                <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">
+                                    {user?.name || 'User'}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    {user?.email}
+                                </p>
+                            </div>
+                            <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isProfileOpen ? 'transform rotate-180' : ''}`} />
+                        </button>
+
+                        {isProfileOpen && (
+                            <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl py-2 transform transition-all duration-200 origin-top-right z-50">
+                                <div className="px-4 py-3 border-b border-gray-800">
+                                    <p className="text-sm font-medium text-white">{user?.name || 'Admin User'}</p>
+                                    <p className="text-xs text-gray-500 truncate">{user?.email || 'admin@example.com'}</p>
+                                </div>
+
+                                <div className="py-1">
+                                    <Link
+                                        to="/account"
+                                        onClick={() => setIsProfileOpen(false)}
+                                        className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                                    >
+                                        <Settings className="w-4 h-4 mr-3 text-gray-500" />
+                                        Account Settings
+                                    </Link>
+                                </div>
+
+                                <div className="border-t border-gray-800 py-1">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-800 hover:text-red-300 transition-colors"
+                                    >
+                                        <LogOut className="w-4 h-4 mr-3" />
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <Link
+                        to="/login"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-lg transition-all transform hover:scale-105"
                     >
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center ring-2 ring-transparent group-hover:ring-indigo-500/50 transition-all">
-                            <span className="text-white font-bold text-xs">
-                                {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
-                            </span>
-                        </div>
-                        <div className="hidden md:block text-left">
-                            <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">
-                                {user?.name || 'User'}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                                {user?.email}
-                            </p>
-                        </div>
-                        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isProfileOpen ? 'transform rotate-180' : ''}`} />
-                    </button>
-
-                    {isProfileOpen && (
-                        <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl py-2 transform transition-all duration-200 origin-top-right z-50">
-                            <div className="px-4 py-3 border-b border-gray-800">
-                                <p className="text-sm font-medium text-white">{user?.name || 'Admin User'}</p>
-                                <p className="text-xs text-gray-500 truncate">{user?.email || 'admin@example.com'}</p>
-                            </div>
-
-                            <div className="py-1">
-                                <Link
-                                    to="/account"
-                                    onClick={() => setIsProfileOpen(false)}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                                >
-                                    <Settings className="w-4 h-4 mr-3 text-gray-500" />
-                                    Account Settings
-                                </Link>
-                            </div>
-
-                            <div className="border-t border-gray-800 py-1">
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-800 hover:text-red-300 transition-colors"
-                                >
-                                    <LogOut className="w-4 h-4 mr-3" />
-                                    Logout
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                        Sign In
+                    </Link>
+                )}
             </div>
         </div>
     );

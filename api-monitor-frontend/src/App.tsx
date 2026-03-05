@@ -43,20 +43,21 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-          <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          {/* Main Layout containing Dashboard and other pages */}
+          <Route element={<DashboardLayout />}>
+            <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/monitors" element={<Monitors />} />
-            <Route path="/monitors/:id" element={<MonitorDetails />} />
-            <Route path="/incidents" element={<Incidents />} />
-            <Route path="/incidents/:id" element={<IncidentDetails />} />
-            <Route path="/team" element={<Team />} />
-            <Route path="/account" element={<Account />} />
+
+            {/* Protected Routes inside the same layout */}
+            <Route path="/monitors" element={<ProtectedRoute><Monitors /></ProtectedRoute>} />
+            <Route path="/monitors/:id" element={<ProtectedRoute><MonitorDetails /></ProtectedRoute>} />
+            <Route path="/incidents" element={<ProtectedRoute><Incidents /></ProtectedRoute>} />
+            <Route path="/incidents/:id" element={<ProtectedRoute><IncidentDetails /></ProtectedRoute>} />
+            <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
+            <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
           </Route>
 
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
