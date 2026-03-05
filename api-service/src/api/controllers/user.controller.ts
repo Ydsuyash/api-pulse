@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthRequest } from '../../middlewares/auth.middleware';
+import { AuthRequest } from '../middleware/auth.middleware';
 import multer from 'multer';
 
 // Extend AuthRequest to include file from Multer
