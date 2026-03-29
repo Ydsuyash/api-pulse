@@ -32,10 +32,20 @@ const Account = () => {
     });
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const isProfileDirty =
+        profileData.name !== (user?.name || '') ||
+        profileData.email !== (user?.email || '') ||
+        countryCode !== initialPhone.code ||
+        phoneNumber !== initialPhone.num ||
+        selectedFile !== null;
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedFile(e.target.files[0]);
+            const file = e.target.files[0];
+            setSelectedFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
         }
     };
 
@@ -70,6 +80,18 @@ const Account = () => {
             setIsLoading(false);
         }
     };
+
+    const isPasswordDirty = passwordData.currentPassword && passwordData.newPassword && passwordData.confirmPassword;
+    const isPasswordMatch = passwordData.newPassword === passwordData.confirmPassword;
+    const isPasswordValid = passwordData.newPassword.length >= 6;
+
+    const getPasswordStrength = (pw: string) => {
+        if (!pw) return { text: '', color: 'bg-transparent', width: 'w-0' };
+        if (pw.length < 6) return { text: 'Weak', color: 'bg-red-500', width: 'w-1/3' };
+        if (pw.length < 10) return { text: 'Good', color: 'bg-yellow-500', width: 'w-2/3' };
+        return { text: 'Strong', color: 'bg-green-500', width: 'w-full' };
+    };
+    const strength = getPasswordStrength(passwordData.newPassword);
 
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -108,8 +130,8 @@ const Account = () => {
                         <div className="flex justify-center mb-6">
                             <div className="relative">
                                 <div className="w-24 h-24 rounded-full bg-gray-800 border-2 border-indigo-500/30 flex items-center justify-center overflow-hidden">
-                                    {profileData.avatar ? (
-                                        <img src={profileData.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                    {(previewUrl || profileData.avatar) ? (
+                                        <img src={previewUrl || profileData.avatar} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
                                         <span className="text-3xl font-bold text-gray-400">
                                             {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
@@ -199,11 +221,11 @@ const Account = () => {
 
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                            disabled={isLoading || !isProfileDirty}
+                            className={`w-full font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2 ${isProfileDirty ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-700 text-gray-500 cursor-not-allowed'}`}
                         >
                             {isLoading ? <Loader className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                            <span>Save Changes</span>
+                            <span>{isLoading ? 'Saving...' : 'Save Changes'}</span>
                         </button>
                     </form>
                 </div>
@@ -245,6 +267,16 @@ const Account = () => {
                                     required
                                 />
                             </div>
+                            {passwordData.newPassword && (
+                                <div className="mt-1">
+                                    <div className="h-1.5 w-full bg-gray-700 rounded-full overflow-hidden">
+                                        <div className={`h-full ${strength.width} ${strength.color} transition-all duration-300`}></div>
+                                    </div>
+                                    <p className={`text-xs mt-1 ${passwordData.newPassword.length < 6 ? 'text-red-400' : 'text-gray-400'}`}>
+                                        Strength: {strength.text} {passwordData.newPassword.length < 6 && '(min 6 chars)'}
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -255,21 +287,22 @@ const Account = () => {
                                     type="password"
                                     value={passwordData.confirmPassword}
                                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                    className="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:border-indigo-500"
+                                    className={`w-full bg-gray-800 border ${passwordData.confirmPassword && !isPasswordMatch ? 'border-red-500' : 'border-gray-700'} text-gray-100 rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:border-indigo-500`}
                                     placeholder="••••••••"
                                     minLength={6}
                                     required
                                 />
                             </div>
+                            {passwordData.confirmPassword && !isPasswordMatch && <p className="text-xs text-red-500">Passwords do not match.</p>}
                         </div>
 
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2 border border-gray-700"
+                            disabled={isLoading || !isPasswordDirty || !isPasswordMatch || !isPasswordValid}
+                            className={`w-full font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2 border border-gray-700 ${(!isPasswordDirty || !isPasswordMatch || !isPasswordValid) ? 'bg-gray-800 text-gray-500 cursor-not-allowed border-gray-700' : 'bg-indigo-600 hover:bg-indigo-700 text-white border-transparent'}`}
                         >
                             {isLoading ? <Loader className="w-5 h-5 animate-spin" /> : <Shield className="w-5 h-5" />}
-                            <span>Update Password</span>
+                            <span>{isLoading ? 'Updating...' : 'Update Password'}</span>
                         </button>
                     </form>
                 </div>

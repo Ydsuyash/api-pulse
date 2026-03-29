@@ -20,6 +20,17 @@ api.interceptors.request.use(
     }
 );
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const login = (data: any) => api.post('/auth/login', data);
 export const register = (data: any) => api.post('/auth/register', data);
 export const getMe = () => api.get('/auth/me');

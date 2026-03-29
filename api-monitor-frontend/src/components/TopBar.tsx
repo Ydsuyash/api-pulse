@@ -45,10 +45,14 @@ const TopBar = () => {
                             onClick={() => setIsProfileOpen(!isProfileOpen)}
                             className="flex items-center space-x-3 pl-4 border-l border-gray-800 focus:outline-none group"
                         >
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center ring-2 ring-transparent group-hover:ring-indigo-500/50 transition-all">
-                                <span className="text-white font-bold text-xs">
-                                    {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
-                                </span>
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center ring-2 ring-transparent group-hover:ring-indigo-500/50 transition-all overflow-hidden">
+                                {user?.avatar ? (
+                                    <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-white font-bold text-xs">
+                                        {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+                                    </span>
+                                )}
                             </div>
                             <div className="hidden md:block text-left">
                                 <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">

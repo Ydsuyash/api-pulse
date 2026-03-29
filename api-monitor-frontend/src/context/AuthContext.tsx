@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 try {
                     api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
                     const { data } = await getMe();
-                    setUser(data);
+                    setUser(data.user);
                 } catch (error) {
                     console.error('Failed to fetch user:', error);
                     logout();

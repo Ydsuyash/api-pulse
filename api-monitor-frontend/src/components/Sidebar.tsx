@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, Activity, AlertTriangle } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -12,12 +12,12 @@ const Sidebar = () => {
 
     return (
         <div className="h-screen w-64 bg-gray-900 text-gray-100 flex flex-col border-r border-gray-800">
-            <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+            <Link to="/" className="p-6 border-b border-gray-800 flex items-center gap-3 hover:bg-gray-800/50 transition-colors">
                 <img src="/logo.svg" alt="API Pulse" className="w-8 h-8" />
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
                     API Pulse
                 </h1>
-            </div>
+            </Link>
 
             <nav className="flex-1 p-4 space-y-2">
                 {navItems.map((item) => (
