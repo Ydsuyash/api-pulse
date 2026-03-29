@@ -8,11 +8,19 @@ const Account = () => {
     const { user } = useAuth(); // Assuming login or a generic 'updateUser' can refresh the context
     const [isLoading, setIsLoading] = useState(false);
 
-    // Profile State
+    const parsePhone = (p: string) => {
+        if (!p) return { code: '+1', num: '' };
+        const match = p.match(/^(\+\d+)\s*(.*)$/);
+        if (match) return { code: match[1], num: match[2] };
+        return { code: '+1', num: p };
+    };
+    const initialPhone = parsePhone(user?.phone || '');
+    const [countryCode, setCountryCode] = useState(initialPhone.code);
+    const [phoneNumber, setPhoneNumber] = useState(initialPhone.num);
+
     const [profileData, setProfileData] = useState({
         name: user?.name || '',
         email: user?.email || '',
-        phone: user?.phone || '',
         avatar: user?.avatar || '',
     });
 
@@ -47,7 +55,7 @@ const Account = () => {
             await updateProfile({
                 name: profileData.name,
                 email: profileData.email,
-                phone: profileData.phone,
+                phone: `${countryCode} ${phoneNumber}`.trim(),
                 avatar: avatarUrl,
             });
 
@@ -141,15 +149,37 @@ const Account = () => {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-400">Phone Number</label>
-                            <div className="relative">
-                                <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
-                                <input
-                                    type="tel"
-                                    value={profileData.phone}
-                                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                                    className="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:border-indigo-500"
-                                    placeholder="+1 234 567 8900"
-                                />
+                            <div className="flex gap-2">
+                                <div className="w-1/3">
+                                    <select
+                                        value={countryCode}
+                                        onChange={(e) => setCountryCode(e.target.value)}
+                                        className="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-lg py-2.5 px-3 focus:outline-none focus:border-indigo-500 overflow-hidden text-ellipsis"
+                                    >
+                                        <option value="+1">🇺🇸 US (+1)</option>
+                                        <option value="+44">🇬🇧 UK (+44)</option>
+                                        <option value="+91">🇮🇳 IN (+91)</option>
+                                        <option value="+86">🇨🇳 CN (+86)</option>
+                                        <option value="+81">🇯🇵 JP (+81)</option>
+                                        <option value="+49">🇩🇪 DE (+49)</option>
+                                        <option value="+33">🇫🇷 FR (+33)</option>
+                                        <option value="+61">🇦🇺 AU (+61)</option>
+                                        <option value="+55">🇧🇷 BR (+55)</option>
+                                        <option value="+27">🇿🇦 ZA (+27)</option>
+                                        <option value="+971">🇦🇪 AE (+971)</option>
+                                        <option value="+65">🇸🇬 SG (+65)</option>
+                                    </select>
+                                </div>
+                                <div className="relative w-2/3">
+                                    <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
+                                    <input
+                                        type="tel"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        className="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:border-indigo-500"
+                                        placeholder="234 567 8900"
+                                    />
+                                </div>
                             </div>
                         </div>
 

@@ -109,8 +109,9 @@ export const uploadAvatar = async (req: AuthRequestWithFile, res: Response) => {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        // Construct the file URL (assuming static file serving is set up)
-        const avatarUrl = `${process.env.CLIENT_URL || 'http://localhost:5000'}/uploads/${req.file.filename}`;
+        // Construct the file URL dynamically
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        const avatarUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
         const updatedUser = await prisma.user.update({
             where: { id: userId },

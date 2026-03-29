@@ -30,6 +30,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
+    const isAuthenticated = !!token;
+
     useEffect(() => {
         const initAuth = async () => {
             const storedToken = localStorage.getItem('token');
@@ -107,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             login,
             register,
             logout,
-            isAuthenticated: !!token,
+            isAuthenticated,
             showLoginModal,
             setShowLoginModal
         }}>
