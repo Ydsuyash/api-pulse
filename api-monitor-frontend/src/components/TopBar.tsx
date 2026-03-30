@@ -3,12 +3,17 @@ import {
     Bell,
     LogOut,
     Settings,
-    ChevronDown
+    ChevronDown,
+    Menu
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const TopBar = () => {
+interface TopBarProps {
+    onMenuClick: () => void;
+}
+
+const TopBar = ({ onMenuClick }: TopBarProps) => {
     const { user, logout } = useAuth();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
@@ -31,7 +36,15 @@ const TopBar = () => {
 
     return (
         <div className="h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-6 z-20 relative">
-            <h2 className="text-gray-400 font-medium">Platform Overview</h2>
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={onMenuClick}
+                    className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white transition-colors"
+                >
+                    <Menu className="w-5 h-5" />
+                </button>
+                <h2 className="text-gray-400 font-medium hidden sm:block">Platform Overview</h2>
+            </div>
 
             <div className="flex items-center space-x-4">
                 <button className="p-2 text-gray-400 hover:text-gray-100 transition-colors relative">
