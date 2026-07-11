@@ -51,17 +51,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         initAuth();
     }, []);
 
-    useEffect(() => {
-        if (!isLoading && !isAuthenticated) {
-            const timer = setTimeout(() => {
-                setShowLoginModal(true);
-            }, 120000); // 2 minutes
-
-            return () => clearTimeout(timer);
-        } else if (isAuthenticated) {
-            setShowLoginModal(false);
-        }
-    }, [isLoading, isAuthenticated]);
 
     const login = async (credentials: any) => {
         try {

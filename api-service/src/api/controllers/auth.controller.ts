@@ -2,10 +2,16 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../../data/prisma';
+import { AuthRequest } from '../middleware/auth.middleware';
 
 export const register = async (req: Request, res: Response) => {
     try {
         const { email, password, name } = req.body;
+        
+        if (!email || !password) {
+            res.status(400).json({ message: 'Email and password are required' });
+            return;
+        }
 
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
@@ -43,6 +49,11 @@ export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
+        if (!email || !password) {
+            res.status(400).json({ message: 'Email and password are required' });
+            return;
+        }
+
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
             res.status(400).json({ message: 'Invalid credentials' });
@@ -69,9 +80,8 @@ export const login = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
-export const getMe = async (req: Request, res: Response) => {
+export const getMe = async (req: AuthRequest, res: Response) => {
     try {
-        // @ts-ignore
         const userId = req.user?.userId;
         const user = await prisma.user.findUnique({
             where: { id: userId },

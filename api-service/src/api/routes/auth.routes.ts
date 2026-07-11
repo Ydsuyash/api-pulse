@@ -7,7 +7,6 @@ const router = Router();
 router.post('/register', register);
 router.post('/login', login);
 
-// @ts-ignore
-router.get('/me', authenticate, getMe);
+router.get('/me', authenticate, getMe as any);
 
 export default router;

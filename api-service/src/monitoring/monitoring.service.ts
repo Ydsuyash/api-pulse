@@ -11,6 +11,26 @@ export const initScheduler = () => {
         console.log('Running monitor checks...');
         await checkMonitors();
     });
+
+    // Run daily at midnight to clean up old check results
+    cron.schedule('0 0 * * *', async () => {
+        console.log('Cleaning up old monitor check results...');
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        
+        try {
+            const deleted = await prisma.checkResult.deleteMany({
+                where: {
+                    createdAt: {
+                        lt: sevenDaysAgo
+                    }
+                }
+            });
+            console.log(`Deleted ${deleted.count} old check results.`);
+        } catch (error) {
+            console.error('Error cleaning up old check results:', error);
+        }
+    });
 };
 
 export const checkMonitors = async () => {
